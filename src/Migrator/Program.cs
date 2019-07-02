@@ -18,7 +18,7 @@ namespace Migrator
                 : new SqlConnectionStringBuilder
                 {
                     ApplicationName = "RabbitMQ Stress Test Migrations",
-                    DataSource = ".",
+                    DataSource = "sqlserver",
                     InitialCatalog = "RabbitStressTest",
                     IntegratedSecurity = false,
                     MultipleActiveResultSets = false,
@@ -48,10 +48,6 @@ namespace Migrator
 
         private static int Return(int exitCode)
         {
-#if DEBUG
-            ConsoleUtilities.WriteLineWithColor(ConsoleColor.Yellow, "Press any key to exit.");
-            Console.ReadKey();
-#endif
             return exitCode;
         }
     }

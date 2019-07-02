@@ -1,0 +1,30 @@
+version: '3.4'
+
+services:
+  migrator:
+    depends_on:
+      - rabbitmq
+      - sqlserver
+    image: ${DOCKER_REGISTRY-}migrator
+    build:
+      context: .
+      dockerfile: Migrator/Dockerfile
+  sqlserver:
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=yourStrong(!)Password
+    hostname: sqlserver
+    image: mcr.microsoft.com/mssql/server
+    ports:
+      - 1433:1433
+  rabbitmq:
+    environment:
+      - RABBITMQ_ERLANG_COOKIE='RSPAZZFQBLQOZDAEOCCX'
+      - RABBITMQ_DEFAULT_USER='admin'
+      - RABBITMQ_DEFAULT_PASS='yourStrong(!)Password'
+      - RABBITMQ_DEFAULT_VHOST='/'
+    hostname: rabbitmq
+    image: rabbitmq:3-management
+    ports:
+      - 15672:15672
+      - 5672:5672
