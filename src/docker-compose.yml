@@ -9,6 +9,7 @@ services:
     build:
       context: .
       dockerfile: Migrator/Dockerfile
+
   sqlserver:
     environment:
       - ACCEPT_EULA=Y
@@ -17,6 +18,7 @@ services:
     image: mcr.microsoft.com/mssql/server
     ports:
       - 1433:1433
+
   rabbitmq:
     environment:
       - RABBITMQ_ERLANG_COOKIE=RSPAZZFQBLQOZDAEOCCX
@@ -28,3 +30,13 @@ services:
     ports:
       - 15672:15672
       - 5672:5672
+
+  subscriber:
+    image: ${DOCKER_REGISTRY-}subscriber
+    build:
+      context: .
+      dockerfile: Subscriber/Dockerfile
+    depends_on:
+      - migrator
+      - rabbitmq
+      - sqlserver

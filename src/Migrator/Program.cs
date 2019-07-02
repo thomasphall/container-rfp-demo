@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.Linq;
-using Common.Utilities;
+using Common.ConsoleSupport;
 using DbUp;
 using Migrations;
 

@@ -1,4 +1,4 @@
-﻿namespace Common.Console
+﻿namespace Common.ConsoleSupport
 {
     public enum CtrlTypes
     {

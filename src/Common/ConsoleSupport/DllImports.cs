@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Common.Console
+namespace Common.ConsoleSupport
 {
     public static class DllImports
     {

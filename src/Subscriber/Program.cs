@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Common.Console;
+using Common.ConsoleSupport;
 
 namespace Subscriber
 {
