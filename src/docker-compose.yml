@@ -3,7 +3,6 @@ version: '3.4'
 services:
   migrator:
     depends_on:
-      - rabbitmq
       - sqlserver
     image: ${DOCKER_REGISTRY-}migrator
     build:
