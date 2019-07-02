@@ -19,10 +19,10 @@ services:
       - 1433:1433
   rabbitmq:
     environment:
-      - RABBITMQ_ERLANG_COOKIE='RSPAZZFQBLQOZDAEOCCX'
-      - RABBITMQ_DEFAULT_USER='admin'
-      - RABBITMQ_DEFAULT_PASS='yourStrong(!)Password'
-      - RABBITMQ_DEFAULT_VHOST='/'
+      - RABBITMQ_ERLANG_COOKIE=RSPAZZFQBLQOZDAEOCCX
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=yourStrong(!)Password
+      - RABBITMQ_DEFAULT_VHOST=/
     hostname: rabbitmq
     image: rabbitmq:3-management
     ports:
