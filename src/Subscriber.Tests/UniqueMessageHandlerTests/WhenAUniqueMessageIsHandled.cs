@@ -6,7 +6,7 @@ using NServiceBus.Testing;
 using NSubstitute;
 using NUnit.Framework;
 
-namespace Subscriber.Tests.EventConsumerTests
+namespace Subscriber.Tests.UniqueMessageHandlerTests
 {
     public class WhenAUniqueMessageIsHandled
     {
@@ -24,9 +24,7 @@ namespace Subscriber.Tests.EventConsumerTests
 
             _unconsumedMessageDeleter = Substitute.For<IDeleteUnconsumedMessages>();
             _messageHandlerContext = new TestableMessageHandlerContext();
-            IHandleMessages<UniqueMessage> uniqueMessageHandler = new UniqueMessageHandler(_unconsumedMessageDeleter);
-
-            await uniqueMessageHandler.Handle(_uniqueMessage, _messageHandlerContext);
+            await new UniqueMessageHandler(_unconsumedMessageDeleter).Handle(_uniqueMessage, _messageHandlerContext);
         }
 
         [Test]
