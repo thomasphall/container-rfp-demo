@@ -1,0 +1,58 @@
+﻿using System;
+using System.Data.SqlClient;
+using System.Linq;
+using Common.Utilities;
+using DbUp;
+using Migrations;
+
+namespace Migrator
+{
+    class Program
+    {
+        static int Main(string[] args)
+        {
+            var connectionStringArg = args.SingleOrDefault();
+
+            var connectionStringBuilder = connectionStringArg != null
+                ? new SqlConnectionStringBuilder(connectionStringArg)
+                : new SqlConnectionStringBuilder
+                {
+                    ApplicationName = "RabbitMQ Stress Test Migrations",
+                    DataSource = ".",
+                    InitialCatalog = "RabbitStressTest",
+                    IntegratedSecurity = false,
+                    MultipleActiveResultSets = false,
+                    Password = "yourStrong(!)Password",
+                    UserID = "sa"
+                };
+
+            var connectionString = connectionStringBuilder.ConnectionString;
+
+            DropDatabase.For.SqlDatabase(connectionString);
+            EnsureDatabase.For.SqlDatabase(connectionString);
+
+            var embeddedScriptMigrator = new SqlServerEmbeddedScriptMigrator(connectionString);
+            var result = embeddedScriptMigrator.PerformUpgrade();
+
+            if (!result.Successful)
+            {
+                ConsoleUtilities.WriteLineWithColor(ConsoleColor.Red, result.Error);
+
+                return Return(-1);
+            }
+
+            ConsoleUtilities.WriteLineWithColor(ConsoleColor.Green, "Migrations executed successfully!");
+
+            return Return(0);
+        }
+
+        private static int Return(int exitCode)
+        {
+#if DEBUG
+            ConsoleUtilities.WriteLineWithColor(ConsoleColor.Yellow, "Press any key to exit.");
+            Console.ReadKey();
+#endif
+            return exitCode;
+        }
+    }
+}
