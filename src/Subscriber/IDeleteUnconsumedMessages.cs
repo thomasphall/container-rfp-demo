@@ -5,6 +5,6 @@ namespace Subscriber
 {
     public interface IDeleteUnconsumedMessages
     {
-        Task Delete(Guid uniqueMessageMessageId);
+        Task Delete(Guid messageId);
     }
 }

@@ -1,36 +1,35 @@
 using System;
 using System.Threading.Tasks;
 using Contracts;
-using NServiceBus;
 using NServiceBus.Testing;
 using NSubstitute;
 using NUnit.Framework;
 
-namespace Subscriber.Tests.UniqueMessageHandlerTests
+namespace Subscriber.Tests.EventMessageHandlerTests
 {
     public class WhenAUniqueMessageIsHandled
     {
         private IDeleteUnconsumedMessages _unconsumedMessageDeleter;
         private TestableMessageHandlerContext _messageHandlerContext;
-        private UniqueMessage _uniqueMessage;
+        private EventMessage _eventMessage;
 
         [OneTimeSetUp]
         public async Task OneTimeSetUp()
         {
-            _uniqueMessage = new UniqueMessage
+            _eventMessage = new EventMessage
             {
                 MessageId = Guid.NewGuid()
             };
 
             _unconsumedMessageDeleter = Substitute.For<IDeleteUnconsumedMessages>();
             _messageHandlerContext = new TestableMessageHandlerContext();
-            await new UniqueMessageHandler(_unconsumedMessageDeleter).Handle(_uniqueMessage, _messageHandlerContext);
+            await new EventMessageHandler(_unconsumedMessageDeleter).Handle(_eventMessage, _messageHandlerContext);
         }
 
         [Test]
         public async Task TheMessageShouldBeDeletedFromTheDatabase()
         {
-            await _unconsumedMessageDeleter.Received(1).Delete(_uniqueMessage.MessageId);
+            await _unconsumedMessageDeleter.Received(1).Delete(_eventMessage.MessageId);
         }
     }
 }
