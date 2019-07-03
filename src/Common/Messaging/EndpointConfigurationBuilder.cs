@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using NServiceBus;
 using NServiceBus.Logging;
 
@@ -7,24 +8,30 @@ namespace Common.Messaging
 {
     public class EndpointConfigurationBuilder : IBuildEndpointConfigurations
     {
-        private readonly IProvideEnvironmentOperations _environmentOperationProvider;
+        private readonly IConfiguration _configuration;
 
-        public EndpointConfigurationBuilder(IProvideEnvironmentOperations environmentOperationProvider)
+        public EndpointConfigurationBuilder(IConfiguration configuration)
         {
-            _environmentOperationProvider = environmentOperationProvider;
+            _configuration = configuration;
         }
 
         public EndpointConfiguration Build(string endpointName, string errorQueue = null, string auditQueue = null, int requestedConcurrency = 0)
         {
             var endpointConfiguration = GetBaseEndpointConfiguration(endpointName);
             ConfigureAuditing(auditQueue, endpointConfiguration);
-            ConfigureMaxConcurrency(requestedConcurrency, endpointConfiguration);
-            ConfigureErrorQueue(errorQueue, endpointConfiguration);
             ConfigureCriticalErrorAction(endpointConfiguration);
-
-            endpointConfiguration.UseTransport<RabbitMQTransport>();
+            ConfigureErrorQueue(errorQueue, endpointConfiguration);
+            ConfigureMaxConcurrency(requestedConcurrency, endpointConfiguration);
+            ConfigureTransport(endpointConfiguration);
 
             return endpointConfiguration;
+        }
+
+        private void ConfigureTransport(EndpointConfiguration endpointConfiguration)
+        {
+            var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
+            transport.ConnectionString(_configuration["connectionString"]);
+            transport.UseConventionalRoutingTopology();
         }
 
         private void ConfigureCriticalErrorAction(EndpointConfiguration endpointConfiguration)
@@ -80,7 +87,7 @@ namespace Common.Messaging
             }
             finally
             {
-                _environmentOperationProvider.FailFast($"Critical error, shutting down: {context.Error}", context.Exception);
+                Environment.FailFast($"Critical error, shutting down: {context.Error}", context.Exception);
             }
         }
     }
