@@ -3,18 +3,18 @@ WORKDIR /app
 
 FROM microsoft/dotnet:2.2-sdk AS build
 WORKDIR /src
-COPY Subscriber/Subscriber.csproj Subscriber/
+COPY Publisher/Publisher.csproj Publisher/
 COPY Contracts/Contracts.csproj Contracts/
 COPY Common/Common.csproj Common/
-RUN dotnet restore Subscriber/Subscriber.csproj
+RUN dotnet restore Publisher/Publisher.csproj
 COPY . .
-WORKDIR /src/Subscriber
-RUN dotnet build Subscriber.csproj -c Release -o /app
+WORKDIR /src/Publisher
+RUN dotnet build Publisher.csproj -c Release -o /app
 
 FROM build AS publish
-RUN dotnet publish Subscriber.csproj -c Release -o /app
+RUN dotnet publish Publisher.csproj -c Release -o /app
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "Subscriber.dll"]
+ENTRYPOINT ["dotnet", "Publisher.dll"]

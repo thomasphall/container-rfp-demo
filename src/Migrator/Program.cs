@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading;
 using Common.ConsoleSupport;
 using DbUp;
 using Migrations;
@@ -11,6 +12,9 @@ namespace Migrator
     {
         static int Main(string[] args)
         {
+            // Completely wrong, intolerant way to way for SQL Server to start.
+            Thread.Sleep(5000);
+
             var connectionStringArg = args.SingleOrDefault();
 
             var connectionStringBuilder = connectionStringArg != null

@@ -9,14 +9,16 @@ services:
       context: .
       dockerfile: Migrator/Dockerfile
 
-  sqlserver:
-    environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=yourStrong(!)Password
-    hostname: sqlserver
-    image: mcr.microsoft.com/mssql/server
-    ports:
-      - 1433:1433
+  publisher:
+    image: ${DOCKER_REGISTRY-}publisher
+    build:
+      context: .
+      dockerfile: Publisher/Dockerfile
+    depends_on:
+      - migrator
+      - rabbitmq
+      - sqlserver
+      - subscriber
 
   rabbitmq:
     environment:
@@ -29,6 +31,15 @@ services:
     ports:
       - 15672:15672
       - 5672:5672
+
+  sqlserver:
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=yourStrong(!)Password
+    hostname: sqlserver
+    image: mcr.microsoft.com/mssql/server
+    ports:
+      - 1433:1433
 
   subscriber:
     image: ${DOCKER_REGISTRY-}subscriber

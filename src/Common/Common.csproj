@@ -10,12 +10,7 @@
     <PackageReference Include="NServiceBus.Autofac" Version="7.0.0" />
     <PackageReference Include="NServiceBus.Newtonsoft.Json" Version="2.2.0" />
     <PackageReference Include="NServiceBus.RabbitMQ" Version="5.1.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Autofac">
-      <HintPath>C:\Users\eric\.nuget\packages\autofac\4.0.0\lib\netstandard1.1\Autofac.dll</HintPath>
-    </Reference>
+    <PackageReference Include="System.Data.SqlClient" Version="4.6.1" />
   </ItemGroup>
 
 </Project>
