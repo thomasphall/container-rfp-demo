@@ -27,9 +27,10 @@ namespace Subscriber
 
         private static async Task EmitStartupSuccessMessages()
         {
-            await Console.Out.WriteLineAsync("NServiceBus endpoint connected.");
-            await Console.Out.WriteLineAsync("Application running.");
-            await Console.Out.WriteLineAsync("Press Ctrl+C to exit...");
+            await ConsoleUtilities.WriteLineAsyncWithColor(ConsoleColor.Green, "NServiceBus endpoint connected.");
+            await ConsoleUtilities.WriteLineAsyncWithColor(ConsoleColor.Green, "Application running.");
+            await Console.Out.WriteLineAsync();
+            await ConsoleUtilities.WriteLineAsyncWithColor(ConsoleColor.Yellow, "Press Ctrl+C to exit...");
         }
 
         private static async Task<Host> StartHost()
