@@ -78,8 +78,8 @@ namespace Publisher
             {
                 await Task.Delay(500, CancellationToken);
                 var eventMessage = new EventMessage { MessageId = Guid.NewGuid() };
+                _eventMessageRecorder.Record(eventMessage.MessageId);
                 await MessageSession.Publish(eventMessage, new PublishOptions()).ConfigureAwait(false);
-                await _eventMessageRecorder.Record(eventMessage.MessageId);
                 await ConsoleUtilities.WriteLineAsyncWithColor(ConsoleColor.Blue, $"Published message: {eventMessage.MessageId}");
             }
 

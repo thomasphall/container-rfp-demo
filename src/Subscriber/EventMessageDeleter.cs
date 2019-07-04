@@ -1,7 +1,6 @@
 using System;
 using System.Data;
 using System.Data.SqlClient;
-using System.Threading.Tasks;
 using Common.Configuration;
 using Common.Data;
 
@@ -13,7 +12,7 @@ namespace Subscriber
         {
         }
 
-        public async Task Delete(Guid messageId)
+        public void Delete(Guid messageId)
         {
             using (var connection = GetConnection())
             {
@@ -27,7 +26,7 @@ namespace Subscriber
                 };
 
                 command.Parameters.Add(messageIdParameter);
-                await command.ExecuteNonQueryAsync();
+                command.ExecuteNonQuery();
                 connection.Close();
             }
         }
