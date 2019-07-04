@@ -10,7 +10,41 @@ namespace Subscriber
     {
         private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(0);
 
-        public static async Task Main(string[] args)
+        public static async Task Main()
+        {
+            ConfigureExitLogic();
+            SetConsoleTitle();
+            var host = await StartHost();
+            await EmitStartupSuccessMessages();
+            await WaitAndStop(host);
+        }
+
+        private static async Task WaitAndStop(Host host)
+        {
+            await _semaphore.WaitAsync();
+            await host.Stop();
+        }
+
+        private static async Task EmitStartupSuccessMessages()
+        {
+            await Console.Out.WriteLineAsync("NServiceBus endpoint connected.");
+            await Console.Out.WriteLineAsync("Application running.");
+            await Console.Out.WriteLineAsync("Press Ctrl+C to exit...");
+        }
+
+        private static async Task<Host> StartHost()
+        {
+            var host = new Host();
+            await host.Start();
+            return host;
+        }
+
+        private static void SetConsoleTitle()
+        {
+            Console.Title = Host.EndpointName;
+        }
+
+        private static void ConfigureExitLogic()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -21,18 +55,6 @@ namespace Subscriber
                 Console.CancelKeyPress += CancelKeyPress;
                 AppDomain.CurrentDomain.ProcessExit += ProcessExit;
             }
-
-            var host = new Host();
-
-            Console.Title = host.EndpointName;
-
-            await host.Start();
-            await Console.Out.WriteLineAsync("Press Ctrl+C to exit...");
-
-            // wait until notified that the process should exit
-            await _semaphore.WaitAsync();
-
-            await host.Stop();
         }
 
         private static void CancelKeyPress(object sender, ConsoleCancelEventArgs e)

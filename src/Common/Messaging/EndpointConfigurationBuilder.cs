@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
+using Autofac;
+using Common.Configuration;
 using NServiceBus;
 using NServiceBus.Logging;
 
@@ -8,11 +9,11 @@ namespace Common.Messaging
 {
     public class EndpointConfigurationBuilder : IBuildEndpointConfigurations
     {
-        private readonly IConfiguration _configuration;
+        private readonly IContainer _container;
 
-        public EndpointConfigurationBuilder(IConfiguration configuration)
+        public EndpointConfigurationBuilder(IContainer container)
         {
-            _configuration = configuration;
+            _container = container;
         }
 
         public EndpointConfiguration Build(string endpointName, string errorQueue = null, string auditQueue = null, int requestedConcurrency = 0)
@@ -20,6 +21,7 @@ namespace Common.Messaging
             var endpointConfiguration = GetBaseEndpointConfiguration(endpointName);
             ConfigureAuditing(auditQueue, endpointConfiguration);
             ConfigureCriticalErrorAction(endpointConfiguration);
+            ConfigureDependencyInjection(endpointConfiguration);
             ConfigureErrorQueue(errorQueue, endpointConfiguration);
             ConfigureMaxConcurrency(requestedConcurrency, endpointConfiguration);
             ConfigureTransport(endpointConfiguration);
@@ -27,33 +29,7 @@ namespace Common.Messaging
             return endpointConfiguration;
         }
 
-        private void ConfigureTransport(EndpointConfiguration endpointConfiguration)
-        {
-            var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
-            transport.ConnectionString(_configuration["connectionString"]);
-            transport.UseConventionalRoutingTopology();
-        }
-
-        private void ConfigureCriticalErrorAction(EndpointConfiguration endpointConfiguration)
-        {
-            endpointConfiguration.DefineCriticalErrorAction(OnCriticalError);
-        }
-
-        private static void ConfigureErrorQueue(string errorQueue, EndpointConfiguration endpointConfiguration)
-        {
-            if (errorQueue != null)
-            {
-                endpointConfiguration.SendFailedMessagesTo(errorQueue);
-            }
-        }
-
-        private static void ConfigureMaxConcurrency(int requestedConcurrency, EndpointConfiguration endpointConfiguration)
-        {
-            var maxConcurrency = GetMaxConcurrency(requestedConcurrency);
-            endpointConfiguration.LimitMessageProcessingConcurrencyTo(maxConcurrency);
-        }
-
-        private static void ConfigureAuditing(string auditQueue, EndpointConfiguration endpointConfiguration)
+        private void ConfigureAuditing(string auditQueue, EndpointConfiguration endpointConfiguration)
         {
             if (auditQueue != null)
             {
@@ -61,11 +37,36 @@ namespace Common.Messaging
             }
         }
 
-        private static int GetMaxConcurrency(int requestedConcurrency)
+        private void ConfigureCriticalErrorAction(EndpointConfiguration endpointConfiguration)
         {
-            var maxConcurrency = Math.Max(requestedConcurrency, 1);
-            var maxLogicalConcurrency = Math.Max(Environment.ProcessorCount, 2);
-            return Math.Min(maxConcurrency, maxLogicalConcurrency);
+            endpointConfiguration.DefineCriticalErrorAction(OnCriticalError);
+        }
+
+        private void ConfigureDependencyInjection(EndpointConfiguration endpointConfiguration)
+        {
+            endpointConfiguration.UseContainer<AutofacBuilder>(customizations => customizations.ExistingLifetimeScope(_container));
+        }
+
+        private void ConfigureErrorQueue(string errorQueue, EndpointConfiguration endpointConfiguration)
+        {
+            if (errorQueue != null)
+            {
+                endpointConfiguration.SendFailedMessagesTo(errorQueue);
+            }
+        }
+
+        private void ConfigureMaxConcurrency(int requestedConcurrency, EndpointConfiguration endpointConfiguration)
+        {
+            var maxConcurrency = GetMaxConcurrency(requestedConcurrency);
+            endpointConfiguration.LimitMessageProcessingConcurrencyTo(maxConcurrency);
+        }
+
+        private void ConfigureTransport(EndpointConfiguration endpointConfiguration)
+        {
+            var configurationProvider = _container.Resolve<IProvideConfiguration>();
+            var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
+            transport.ConnectionString(configurationProvider.Configuration["rabbitmqConnectionString"]);
+            transport.UseConventionalRoutingTopology();
         }
 
         private EndpointConfiguration GetBaseEndpointConfiguration(string endpointName)
@@ -77,6 +78,13 @@ namespace Common.Messaging
             LogManager.Use<DefaultFactory>().Level(LogLevel.Info);
 
             return endpointConfiguration;
+        }
+
+        private int GetMaxConcurrency(int requestedConcurrency)
+        {
+            var maxConcurrency = Math.Max(requestedConcurrency, 1);
+            var maxLogicalConcurrency = Math.Max(Environment.ProcessorCount, 2);
+            return Math.Min(maxConcurrency, maxLogicalConcurrency);
         }
 
         private async Task OnCriticalError(ICriticalErrorContext context)

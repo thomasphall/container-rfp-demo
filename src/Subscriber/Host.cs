@@ -1,13 +1,13 @@
 using System;
 using System.Threading.Tasks;
+using Autofac;
 using Common.Messaging;
-using Microsoft.Extensions.Configuration;
 using NServiceBus;
 using NServiceBus.Logging;
 
 namespace Subscriber
 {
-    internal class Host
+    internal class Host : HostBase<SubscriberModule>
     {
         private readonly EndpointConfiguration _endpointConfiguration;
         private IEndpointInstance _endpoint;
@@ -15,14 +15,13 @@ namespace Subscriber
 
         public Host()
         {
-            var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
-            var endpointConfigurationBuilder = new EndpointConfigurationBuilder(configuration);
+            var endpointConfigurationBuilder = new EndpointConfigurationBuilder(Container);
 
             _log = LogManager.GetLogger<Host>();
             _endpointConfiguration = endpointConfigurationBuilder.Build(EndpointName, null, null, 10);
         }
 
-        public string EndpointName => "Subscriber";
+        public static string EndpointName => "Subscriber";
 
         public async Task Start()
         {

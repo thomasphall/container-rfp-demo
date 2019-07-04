@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Subscriber
 {
-    public interface IDeleteUnconsumedMessages
+    public interface IDeleteEventMessages
     {
         Task Delete(Guid messageId);
     }

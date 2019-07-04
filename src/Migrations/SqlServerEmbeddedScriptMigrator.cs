@@ -1,6 +1,4 @@
-﻿using System;
-
-using DbUp;
+﻿using DbUp;
 using DbUp.Engine;
 
 namespace Migrations
