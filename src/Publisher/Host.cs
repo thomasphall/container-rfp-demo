@@ -1,12 +1,9 @@
 using System;
-using System.Data;
-using System.Data.SqlClient;
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
 using Common.Configuration;
 using Common.ConsoleSupport;
-using Common.Data;
 using Common.Messaging;
 using Contracts;
 using NServiceBus;
@@ -88,41 +85,5 @@ namespace Publisher
 
             await Task.CompletedTask;
         }
-    }
-
-    internal class EventMessageRecorder : EventMessageBase, IRecordEventMessages
-    {
-        private readonly string _clientName;
-
-        public EventMessageRecorder(IProvideConfiguration configurationProvider, string clientName) : base(configurationProvider)
-        {
-            _clientName = clientName;
-        }
-
-        public async Task Record(Guid messageId)
-        {
-            using (var connection = GetConnection())
-            {
-                connection.Open();
-                var command = connection.CreateCommand();
-                command.CommandType = CommandType.StoredProcedure;
-                command.CommandText = "dbo.spUnconsumedMessageInsert";
-                var clientNameParameter = new SqlParameter("clientName", SqlDbType.VarChar, 100)
-                {
-                    Value = _clientName
-                };
-                var messageIdParameter = new SqlParameter("messageId", SqlDbType.UniqueIdentifier) { Value = messageId };
-
-                command.Parameters.Add(clientNameParameter);
-                command.Parameters.Add(messageIdParameter);
-                await command.ExecuteNonQueryAsync();
-                connection.Close();
-            }
-        }
-    }
-
-    internal interface IRecordEventMessages
-    {
-        Task Record(Guid eventMessageMessageId);
     }
 }
