@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
 using Autofac.Core;
 using Common.ConsoleSupport;
-using Common.Messaging.Extensions;
 using Common.Registration;
 using NServiceBus;
 using NServiceBus.Logging;
@@ -11,17 +11,20 @@ using NServiceBus.Logging;
 namespace Common.Messaging
 {
     public abstract class HostBase<TModule> : IProvideIoC
-    where TModule : IModule, new()
+        where TModule : IModule, new()
     {
+        private readonly ILog _log;
         private readonly uint _maxConnectionAttempts;
         private IEndpointInstance _endpoint;
-        private readonly ILog _log;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="HostBase{TModule}" /> class.
         /// </summary>
         protected HostBase(string endpointName, uint maxConnectionAttempts)
         {
+            CancellationTokenSource = new CancellationTokenSource();
+            CancellationToken = CancellationTokenSource.Token;
+
             EndpointName = endpointName;
             Container = BuildContainer();
 
@@ -29,10 +32,15 @@ namespace Common.Messaging
             _maxConnectionAttempts = maxConnectionAttempts;
         }
 
-        /// <inheritdoc cref="IProvideIoC.Container" />
-        public IContainer Container { get; }
+        protected CancellationToken CancellationToken { get; }
+
+        protected CancellationTokenSource CancellationTokenSource { get; }
 
         public string EndpointName { get; }
+
+        public IContainer Container { get; }
+
+        protected IMessageSession MessageSession => _endpoint;
 
         private IContainer BuildContainer()
         {
@@ -50,7 +58,6 @@ namespace Common.Messaging
                 var endpointConfigurationBuilder = new EndpointConfigurationBuilder(Container);
 
                 while (true)
-                {
                     try
                     {
                         var endpointConfiguration = endpointConfigurationBuilder.Build(EndpointName, null, null, 10);
@@ -59,33 +66,38 @@ namespace Common.Messaging
                     }
                     catch (Exception ex)
                     {
-                        if (connectionAttempts >= _maxConnectionAttempts)
-                        {
-                            throw;
-                        }
+                        if (connectionAttempts >= _maxConnectionAttempts) throw;
 
                         var delay = 100 * (int) Math.Pow(2, connectionAttempts++);
                         await ConsoleUtilities.WriteLineAsyncWithColor(ConsoleColor.Yellow, $"Startup failed, retry attempt {connectionAttempts} reason: {ex.Message}").ConfigureAwait(false);
                         await Task.Delay(delay).ConfigureAwait(false);
                     }
-                }
             }
             catch (Exception ex)
             {
                 FailFast("Failed to start.", ex);
             }
+
+            StartTasks();
         }
 
         public async Task Stop()
         {
             try
             {
-                await _endpoint?.Stop();
+                CancelTasks();
+                await WaitForTasksToFinish();
+                await _endpoint.Stop();
             }
             catch (Exception ex)
             {
                 FailFast("Failed to stop correctly.", ex);
             }
+        }
+
+        private void CancelTasks()
+        {
+            CancellationTokenSource.Cancel();
         }
 
         private void FailFast(string message, Exception ex)
@@ -99,5 +111,9 @@ namespace Common.Messaging
                 Environment.FailFast(message, ex);
             }
         }
+
+        protected abstract Task WaitForTasksToFinish();
+
+        protected abstract void StartTasks();
     }
 }

@@ -1,4 +1,6 @@
+using System;
 using System.Threading.Tasks;
+using Common.ConsoleSupport;
 using Contracts;
 using NServiceBus;
 
@@ -16,7 +18,8 @@ namespace Subscriber.MessageHandlers
         public async Task Handle(EventMessage eventMessage, IMessageHandlerContext context)
         {
             await _eventMessageDeleter.Delete(eventMessage.MessageId);
-            await Task.Delay(1000).ConfigureAwait(false);
+            await ConsoleUtilities.WriteLineAsyncWithColor(ConsoleColor.Blue, $"Published message: {eventMessage.MessageId}");
+            await Task.Delay(250).ConfigureAwait(false);
         }
     }
 }

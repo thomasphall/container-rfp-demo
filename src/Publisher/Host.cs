@@ -1,105 +1,128 @@
 using System;
-using System.Diagnostics;
+using System.Data;
+using System.Data.SqlClient;
+using System.Threading;
 using System.Threading.Tasks;
+using Autofac;
+using Common.Configuration;
+using Common.ConsoleSupport;
+using Common.Data;
+using Common.Messaging;
+using Contracts;
 using NServiceBus;
-using NServiceBus.Logging;
 
 namespace Publisher
 {
-    class Host
+    internal class Host : HostBase<PublisherModule>
     {
-        // TODO: optionally choose a custom logging library
-        // https://docs.particular.net/nservicebus/logging/#custom-logging
-        // LogManager.Use<TheLoggingFactory>();
-        static readonly ILog log = LogManager.GetLogger<Host>();
+        private const string ENDPOINT_NAME = "Publisher";
 
-        IEndpointInstance endpoint;
+        private readonly IRecordEventMessages _eventMessageRecorder;
 
-        // TODO: give the endpoint an appropriate name
-        public string EndpointName => "Publisher";
+        private Task _messagePumpTask;
 
-        public async Task Start()
+        public Host() : base(ENDPOINT_NAME, 10)
+        {
+            _eventMessageRecorder = new EventMessageRecorder(Container.Resolve<IProvideConfiguration>(), ENDPOINT_NAME);
+        }
+
+        protected override async Task WaitForTasksToFinish()
+        {
+            var timeoutTask = Task.Delay(TimeSpan.FromSeconds(30), CancellationTokenSource.Token);
+
+            var finishedTask = await Task.WhenAny(timeoutTask, _messagePumpTask).ConfigureAwait(false);
+
+            if (finishedTask.Equals(timeoutTask))
+            {
+                await ConsoleUtilities.WriteLineAsyncWithColor(ConsoleColor.Red, "The message pump failed to stop with in the time allowed(30s)").ConfigureAwait(false);
+            }
+        }
+
+        protected override void StartTasks()
+        {
+            StartMessagePump();
+        }
+
+        private void StartMessagePump()
+        {
+            _messagePumpTask = Task.Factory
+                .StartNew(
+                    PumpMessages,
+                    CancellationToken.None,
+                    TaskCreationOptions.LongRunning,
+                    TaskScheduler.Default)
+                .Unwrap();
+        }
+
+        private async Task PumpMessages()
         {
             try
             {
-                // TODO: consider moving common endpoint configuration into a shared project
-                // for use by all endpoints in the system
-                var endpointConfiguration = new EndpointConfiguration(EndpointName);
+                await InnerPumpMessages().ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                // For graceful shutdown purposes.
+            }
+            catch (Exception ex)
+            {
+                await ConsoleUtilities.WriteLineAsyncWithColor(ConsoleColor.Red, $"Error in message pump: {ex.Message}").ConfigureAwait(false);
+            }
 
-                // TODO: ensure the most appropriate serializer is chosen
-                // https://docs.particular.net/nservicebus/serialization/
-                endpointConfiguration.UseSerialization<NewtonsoftSerializer>();
+            if (!CancellationToken.IsCancellationRequested)
+            {
+                await PumpMessages().ConfigureAwait(false);
+            }
+        }
 
-                endpointConfiguration.DefineCriticalErrorAction(OnCriticalError);
+        private async Task InnerPumpMessages()
+        {
+            while (!CancellationTokenSource.IsCancellationRequested)
+            {
+                await Task.Delay(500, CancellationToken);
+                var eventMessage = new EventMessage { MessageId = Guid.NewGuid() };
+                await MessageSession.Publish(eventMessage, new PublishOptions()).ConfigureAwait(false);
+                await _eventMessageRecorder.Record(eventMessage.MessageId);
+                await ConsoleUtilities.WriteLineAsyncWithColor(ConsoleColor.Blue, $"Published message: {eventMessage.MessageId}");
+            }
 
-                // TODO: remove this condition after choosing a transport, persistence and deployment method suitable for production
-                if (Environment.UserInteractive && Debugger.IsAttached)
+            await Task.CompletedTask;
+        }
+    }
+
+    internal class EventMessageRecorder : EventMessageBase, IRecordEventMessages
+    {
+        private readonly string _clientName;
+
+        public EventMessageRecorder(IProvideConfiguration configurationProvider, string clientName) : base(configurationProvider)
+        {
+            _clientName = clientName;
+        }
+
+        public async Task Record(Guid messageId)
+        {
+            using (var connection = GetConnection())
+            {
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandType = CommandType.StoredProcedure;
+                command.CommandText = "dbo.spUnconsumedMessageInsert";
+                var clientNameParameter = new SqlParameter("clientName", SqlDbType.VarChar, 100)
                 {
-                    // TODO: choose a durable transport for production
-                    // https://docs.particular.net/transports/
-                    var transportExtensions = endpointConfiguration.UseTransport<LearningTransport>();
+                    Value = _clientName
+                };
+                var messageIdParameter = new SqlParameter("messageId", SqlDbType.UniqueIdentifier) { Value = messageId };
 
-                    // TODO: choose a durable persistence for production
-                    // https://docs.particular.net/persistence/
-                    endpointConfiguration.UsePersistence<LearningPersistence>();
-
-                    // TODO: create a script for deployment to production
-                    endpointConfiguration.EnableInstallers();
-                }
-
-                // TODO: replace the license.xml file with your license file
-
-                // TODO: perform any futher start up operations before or after starting the endpoint
-                endpoint = await Endpoint.Start(endpointConfiguration);
-            }
-            catch (Exception ex)
-            {
-                FailFast("Failed to start.", ex);
+                command.Parameters.Add(clientNameParameter);
+                command.Parameters.Add(messageIdParameter);
+                await command.ExecuteNonQueryAsync();
+                connection.Close();
             }
         }
+    }
 
-        public async Task Stop()
-        {
-            try
-            {
-                // TODO: perform any futher shutdown operations before or after stopping the endpoint
-                await endpoint?.Stop();
-            }
-            catch (Exception ex)
-            {
-                FailFast("Failed to stop correctly.", ex);
-            }
-        }
-
-        async Task OnCriticalError(ICriticalErrorContext context)
-        {
-            // TODO: decide if stopping the endpoint and exiting the process is the best response to a critical error
-            // https://docs.particular.net/nservicebus/hosting/critical-errors
-            // and consider setting up service recovery
-            // https://docs.particular.net/nservicebus/hosting/windows-service#installation-restart-recovery
-            try
-            {
-                await context.Stop();
-            }
-            finally
-            {
-                FailFast($"Critical error, shutting down: {context.Error}", context.Exception);
-            }
-        }
-
-        void FailFast(string message, Exception exception)
-        {
-            try
-            {
-                log.Fatal(message, exception);
-
-                // TODO: when using an external logging framework it is important to flush any pending entries prior to calling FailFast
-                // https://docs.particular.net/nservicebus/hosting/critical-errors#when-to-override-the-default-critical-error-action
-            }
-            finally
-            {
-                Environment.FailFast(message, exception);
-            }
-        }
+    internal interface IRecordEventMessages
+    {
+        Task Record(Guid eventMessageMessageId);
     }
 }
