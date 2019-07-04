@@ -12,10 +12,4 @@
     <PackageReference Include="NServiceBus.RabbitMQ" Version="5.1.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="Autofac">
-      <HintPath>C:\Users\eric\.nuget\packages\autofac\4.0.0\lib\netstandard1.1\Autofac.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>

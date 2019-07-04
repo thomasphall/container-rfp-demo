@@ -16,6 +16,7 @@ namespace Subscriber.MessageHandlers
         public async Task Handle(EventMessage eventMessage, IMessageHandlerContext context)
         {
             await _eventMessageDeleter.Delete(eventMessage.MessageId);
+            await Task.Delay(1000).ConfigureAwait(false);
         }
     }
 }

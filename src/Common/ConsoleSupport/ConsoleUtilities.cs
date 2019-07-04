@@ -10,7 +10,7 @@ namespace Common.ConsoleSupport
 
             var originalColor = Console.ForegroundColor;
             Console.ForegroundColor = consoleColor;
-            await Console.Out.WriteAsync(value.ToString());
+            await Console.Out.WriteAsync(value.ToString()).ConfigureAwait(false);
             Console.ForegroundColor = originalColor;
         }
 
@@ -19,16 +19,25 @@ namespace Common.ConsoleSupport
 
             var originalColor = Console.ForegroundColor;
             Console.ForegroundColor = consoleColor;
-            await Console.Out.WriteLineAsync(value.ToString());
+            await Console.Out.WriteLineAsync(value.ToString()).ConfigureAwait(false);
             Console.ForegroundColor = originalColor;
         }
 
         public static void WriteLineWithColor(ConsoleColor consoleColor, object value)
         {
-            
+
             var originalColor = Console.ForegroundColor;
             Console.ForegroundColor = consoleColor;
             Console.WriteLine(value.ToString());
+            Console.ForegroundColor = originalColor;
+        }
+
+        public static void WriteWithColor(ConsoleColor consoleColor, object value)
+        {
+
+            var originalColor = Console.ForegroundColor;
+            Console.ForegroundColor = consoleColor;
+            Console.Write(value.ToString());
             Console.ForegroundColor = originalColor;
         }
     }

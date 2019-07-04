@@ -4,6 +4,7 @@ WORKDIR /app
 FROM microsoft/dotnet:2.2-sdk AS build
 WORKDIR /src
 COPY Subscriber/Subscriber.csproj Subscriber/
+COPY Contracts/Contracts.csproj Contracts/
 COPY Common/Common.csproj Common/
 RUN dotnet restore Subscriber/Subscriber.csproj
 COPY . .

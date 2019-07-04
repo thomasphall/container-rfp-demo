@@ -12,11 +12,19 @@ namespace Subscriber
 
         public static async Task Main()
         {
+            // Completely wrong, intolerant way to way for dependencies.
+            Thread.Sleep(10000);
+
             ConfigureExitLogic();
-            SetConsoleTitle();
             var host = await StartHost();
+            SetConsoleTitle(host);
             await EmitStartupSuccessMessages();
             await WaitAndStop(host);
+        }
+
+        private static void SetConsoleTitle(Host host)
+        {
+            Console.Title = host.EndpointName;
         }
 
         private static async Task WaitAndStop(Host host)
@@ -38,11 +46,6 @@ namespace Subscriber
             var host = new Host();
             await host.Start();
             return host;
-        }
-
-        private static void SetConsoleTitle()
-        {
-            Console.Title = Host.EndpointName;
         }
 
         private static void ConfigureExitLogic()
