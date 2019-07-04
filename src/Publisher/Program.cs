@@ -13,7 +13,7 @@ namespace Publisher
         public static async Task Main()
         {
             // Completely wrong, intolerant way to way for dependencies.
-            // Thread.Sleep(10000);
+            Thread.Sleep(10000);
 
             ConfigureExitLogic();
             var host = await StartHost();
