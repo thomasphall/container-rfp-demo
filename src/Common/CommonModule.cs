@@ -13,6 +13,7 @@ namespace Common
         private static void RegisterModules(ContainerBuilder builder)
         {
             builder.RegisterModule<ConfigurationModule>();
+            builder.RegisterModule<RabbitMqModule>();
         }
     }
 }
