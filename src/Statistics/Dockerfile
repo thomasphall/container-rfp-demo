@@ -5,6 +5,7 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
 WORKDIR /src
 COPY ["Statistics/Statistics.csproj", "Statistics/"]
+COPY ["Common/Common.csproj", "Common/"]
 RUN dotnet restore "Statistics/Statistics.csproj"
 COPY . .
 WORKDIR "/src/Statistics"
