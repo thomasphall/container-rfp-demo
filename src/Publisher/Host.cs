@@ -55,7 +55,10 @@ namespace Publisher
         {
             try
             {
-                await InnerPumpMessages().ConfigureAwait(false);
+                if (!CancellationToken.IsCancellationRequested)
+                {
+                    await InnerPumpMessages().ConfigureAwait(false);
+                }
             }
             catch (OperationCanceledException)
             {
@@ -65,18 +68,13 @@ namespace Publisher
             {
                 await ConsoleUtilities.WriteLineAsyncWithColor(ConsoleColor.Red, $"Error in message pump: {ex.Message}").ConfigureAwait(false);
             }
-
-            if (!CancellationToken.IsCancellationRequested)
-            {
-                await PumpMessages().ConfigureAwait(false);
-            }
         }
 
         private async Task InnerPumpMessages()
         {
             while (!CancellationTokenSource.IsCancellationRequested)
             {
-                await Task.Delay(500, CancellationToken);
+                await Task.Delay(250, CancellationToken);
                 var eventMessage = new EventMessage { MessageId = Guid.NewGuid() };
                 _eventMessageRecorder.Record(eventMessage.MessageId);
                 await MessageSession.Publish(eventMessage, new PublishOptions()).ConfigureAwait(false);
