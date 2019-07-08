@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29025.244
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Migrator", "Migrator\Migrator.csproj", "{00986E4B-8284-468B-BBEE-64E008389DB6}"
 EndProject
@@ -20,6 +20,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Contracts", "Contracts\Contracts.csproj", "{0D71E5B4-B7F2-44CD-812C-A8E26D6D33AD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Publisher", "Publisher\Publisher.csproj", "{D4D96193-1DE1-4084-B12E-165AAAE62762}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Website", "Website\Website.csproj", "{DBD38245-7124-4358-84A6-0F4FB6C46661}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -115,6 +117,18 @@ Global
 		{D4D96193-1DE1-4084-B12E-165AAAE62762}.Release|x64.Build.0 = Release|Any CPU
 		{D4D96193-1DE1-4084-B12E-165AAAE62762}.Release|x86.ActiveCfg = Release|Any CPU
 		{D4D96193-1DE1-4084-B12E-165AAAE62762}.Release|x86.Build.0 = Release|Any CPU
+		{DBD38245-7124-4358-84A6-0F4FB6C46661}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBD38245-7124-4358-84A6-0F4FB6C46661}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBD38245-7124-4358-84A6-0F4FB6C46661}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DBD38245-7124-4358-84A6-0F4FB6C46661}.Debug|x64.Build.0 = Debug|Any CPU
+		{DBD38245-7124-4358-84A6-0F4FB6C46661}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DBD38245-7124-4358-84A6-0F4FB6C46661}.Debug|x86.Build.0 = Debug|Any CPU
+		{DBD38245-7124-4358-84A6-0F4FB6C46661}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBD38245-7124-4358-84A6-0F4FB6C46661}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBD38245-7124-4358-84A6-0F4FB6C46661}.Release|x64.ActiveCfg = Release|Any CPU
+		{DBD38245-7124-4358-84A6-0F4FB6C46661}.Release|x64.Build.0 = Release|Any CPU
+		{DBD38245-7124-4358-84A6-0F4FB6C46661}.Release|x86.ActiveCfg = Release|Any CPU
+		{DBD38245-7124-4358-84A6-0F4FB6C46661}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
