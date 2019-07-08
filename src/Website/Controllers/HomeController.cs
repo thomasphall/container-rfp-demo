@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -13,24 +10,14 @@ namespace Website.Controllers
     {
         public async Task<IActionResult> Index()
         {
-            var random = new Random(DateTime.Now.Millisecond);
-            var id = random.Next(1, 100);
+            var queueName = "Subscriber";
 
             using (var httpClient = new HttpClient())
             {
-                var httpRequestMessage = new HttpRequestMessage();
-                httpRequestMessage.RequestUri = new Uri($"http://statistics/api/values/{id}");
-
-                var httpResponse = await httpClient.SendAsync(httpRequestMessage);
-                var response = await httpResponse.Content.ReadAsStringAsync();
-                ViewData["message"] = $"Hello from website and {response}";
+                // Get the queue depth.
+                ViewData["messageCount"] = await httpClient.GetStringAsync($"http://statistics/api/QueueDepths/{queueName}");
             }
 
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
             return View();
         }
 

@@ -41,6 +41,18 @@ services:
     ports:
       - 1433:1433
 
+  statistics:
+    image: ${DOCKER_REGISTRY-}statistics
+    build:
+      context: .
+      dockerfile: Statistics/Dockerfile
+    depends_on:
+      - migrator
+      - publisher
+      - rabbitmq
+      - sqlserver
+      - subscriber
+
   subscriber:
     image: ${DOCKER_REGISTRY-}subscriber
     build:
@@ -56,9 +68,10 @@ services:
     build:
       context: .
       dockerfile: Website/Dockerfile
-
-  statistics:
-    image: ${DOCKER_REGISTRY-}statistics
-    build:
-      context: .
-      dockerfile: Statistics/Dockerfile
+    depends_on:
+      - migrator
+      - publisher
+      - rabbitmq
+      - sqlserver
+      - statistics
+      - subscriber

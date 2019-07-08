@@ -1,9 +1,8 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Statistics";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    <p><strong>Message:  </strong>@ViewData["message"]</p>
-</div>
+    <div class="text-center">
+        <h1 class="display-4">System Health</h1>
+        <p><strong>Unconsumed messages</strong>:  @ViewData["messageCount"]</p>
+    </div>
