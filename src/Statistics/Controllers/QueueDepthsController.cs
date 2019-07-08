@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using RabbitMQ.Client;
+﻿using Common.RabbitMq;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Statistics.Controllers
 {
@@ -11,18 +11,8 @@ namespace Statistics.Controllers
         [HttpGet("{queueName}")]
         public ActionResult<uint> Get(string queueName)
         {
-            var connectionFactory = new ConnectionFactory
-            {
-                UserName = "admin",
-                Password = "yourStrong(!)Password",
-                VirtualHost = "/",
-                HostName = "rabbitmq"
-            };
-
-            var connection = connectionFactory.CreateConnection();
-            var channel = connection.CreateModel();
-            var response = channel.QueueDeclarePassive(queueName);
-            var messageCount = response.MessageCount;
+            var queueDepthReader = new RabbitMqQueueDepthReader();
+            var messageCount = queueDepthReader.GetQueueDepth(queueName);
 
             return messageCount;
         }
