@@ -2,7 +2,7 @@
 
 namespace Common.Configuration
 {
-    class AppSettingsConfigurationProvider : IProvideConfiguration
+    public class AppSettingsConfigurationProvider : IProvideConfiguration
     {
         private IConfigurationRoot _configuration;
 
