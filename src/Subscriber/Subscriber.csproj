@@ -10,10 +10,12 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <CodeAnalysisRuleSet>Subscriber.ruleset</CodeAnalysisRuleSet>
+    <WarningsAsErrors />
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <CodeAnalysisRuleSet>Subscriber.ruleset</CodeAnalysisRuleSet>
+    <WarningsAsErrors />
   </PropertyGroup>
 
   <ItemGroup>
