@@ -6,7 +6,7 @@
     <ProjectGuid>88441a9c-5429-4f3d-9ecf-a1ea669ab401</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}</DockerServiceUrl>
-    <DockerServiceName>statistics</DockerServiceName>
+    <DockerServiceName>website</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.override.yml">

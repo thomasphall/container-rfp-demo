@@ -21,7 +21,7 @@ namespace Statistics.Controllers
         [HttpGet("{id}")]
         public ActionResult<string> Get(int id)
         {
-            return "value";
+            return $"statistics service (with value {id})";
         }
 
         // POST api/values
