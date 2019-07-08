@@ -50,3 +50,9 @@ services:
       - migrator
       - rabbitmq
       - sqlserver
+
+  website:
+    image: ${DOCKER_REGISTRY-}website
+    build:
+      context: .
+      dockerfile: Website/Dockerfile
