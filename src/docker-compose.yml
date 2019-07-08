@@ -50,3 +50,15 @@ services:
       - migrator
       - rabbitmq
       - sqlserver
+
+  website:
+    image: ${DOCKER_REGISTRY-}website
+    build:
+      context: .
+      dockerfile: Website/Dockerfile
+
+  statistics:
+    image: ${DOCKER_REGISTRY-}statistics
+    build:
+      context: .
+      dockerfile: Statistics/Dockerfile

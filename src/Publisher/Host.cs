@@ -74,7 +74,7 @@ namespace Publisher
         {
             while (!CancellationTokenSource.IsCancellationRequested)
             {
-                await Task.Delay(250, CancellationToken);
+                await Task.Delay(1000, CancellationToken);
                 var eventMessage = new EventMessage { MessageId = Guid.NewGuid() };
                 _eventMessageRecorder.Record(eventMessage.MessageId);
                 await MessageSession.Publish(eventMessage, new PublishOptions()).ConfigureAwait(false);
