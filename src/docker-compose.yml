@@ -52,6 +52,8 @@ services:
       - rabbitmq
       - sqlserver
       - subscriber
+    ports:
+      - 80:8081
 
   subscriber:
     image: ${DOCKER_REGISTRY-}subscriber
@@ -75,3 +77,5 @@ services:
       - sqlserver
       - statistics
       - subscriber
+    ports:
+      - 80:8080
