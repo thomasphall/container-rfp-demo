@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Statistics.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class ValuesController : ControllerBase
     {
         // GET api/values

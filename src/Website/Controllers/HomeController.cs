@@ -15,15 +15,21 @@ namespace Website.Controllers
         {
             var random = new Random(DateTime.Now.Millisecond);
             var id = random.Next(1, 100);
+            var queueName = "Subscriber";
 
             using (var httpClient = new HttpClient())
             {
-                var httpRequestMessage = new HttpRequestMessage();
-                httpRequestMessage.RequestUri = new Uri($"http://statistics/api/values/{id}");
+                // Get the string value
+                var value = await httpClient.GetStringAsync($"http://statistics/api/values/{id}");
 
-                var httpResponse = await httpClient.SendAsync(httpRequestMessage);
-                var response = await httpResponse.Content.ReadAsStringAsync();
-                ViewData["message"] = $"Hello from website and {response}";
+                // Get the queue depth.
+                var httpRequestMessage = new HttpRequestMessage();
+                httpRequestMessage.RequestUri = new Uri($"http://statistics/api/QueueDepths/{queueName}");
+                var queueDepthResponse = await httpClient.SendAsync(httpRequestMessage);
+                var queueDepth = await queueDepthResponse.Content.ReadAsStringAsync();
+
+                ViewData["valueMessage"] = $"Hello from website and {value}";
+                ViewData["messageCount"] = queueDepth;
             }
 
             return View();
