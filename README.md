@@ -38,8 +38,17 @@ Website is an ASP.Net Core MVC application with a single purpose:
     - A git client.
 
 ### Getting the application
-- Navigate to the directory where you want the solution to be downloaded.  We'll use C:\src as an example:
-          cd C:\src
-- and clone the source code from Git Hub with the following git command:
-    git clone https://github.com/EnterpriseProductsLP/container-rfp-demo.git
+Navigate to the directory where you want the solution to be downloaded.  We'll use **C:\source** as an example:
+~~~
+cd C:\source
+~~~
 
+Clone the source code from Git Hub with the following git command:
+~~~
+git clone https://github.com/EnterpriseProductsLP/container-rfp-demo.git
+~~~
+
+The source code is downloaded to C:\source\container-rfp-demo
+
+### Running the application
+Navigate to the directory where you cloned the source code.  We'll use 
