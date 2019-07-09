@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <CodeAnalysisRuleSet>..\Shared.ruleset</CodeAnalysisRuleSet>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -9,14 +10,16 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <CodeAnalysisRuleSet>Subscriber.ruleset</CodeAnalysisRuleSet>
     <WarningsAsErrors />
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <CodeAnalysisRuleSet>Subscriber.ruleset</CodeAnalysisRuleSet>
     <WarningsAsErrors />
   </PropertyGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Include="..\license.xml" Link="license.xml">
@@ -28,6 +31,10 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.7.9" />
     <PackageReference Include="NServiceBus" Version="7.1.10" />
     <PackageReference Include="NServiceBus.Autofac" Version="7.0.0" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="System.Data.SqlClient" Version="4.6.1" />
   </ItemGroup>
 
