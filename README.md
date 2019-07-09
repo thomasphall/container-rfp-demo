@@ -2,13 +2,13 @@
 
 A sample application for use in testing container solutions.
 
-This solution, taken in its entirety, provides a fake stress-tess application for putting a load on RabbitMQ brokers and determining in messages are dropped under load.
+This solution, taken in its entirety, provides a fake stress-tess application for putting a load on RabbitMQ brokers and determining if messages are dropped under load.
 
 
 
 ## Prerequisites
 - A host machine with the following:
-    - A Docker-Enabled host capable of running Docker Compose applications compatible with the 3.4 Docker Compose format or greater.
+    - A Docker host capable of running Docker Compose applications compatible with the 3.4 Docker Compose format or later.
     - An internet connection with access to Git Hub and Docker Hub.
     - A git client.
     - Nothing currently bound on the following local TCP ports:
@@ -27,13 +27,13 @@ The solution consists of four applications:
 ### *Publisher*
 *Publisher* is an application that performs the following actions:
 1. Publishes one *EventMessage* per second, and has no knowledge of any *Subscribers* to that event.
-2. Puts the *EventMessage's* unique identifer in the *unconsumedmessage* table so we can check later to see if any messages were not properly handled.
+2. Puts the *EventMessage's* unique identifer in the *UnconsumedMessage* table so we can check later to see if any messages were not properly handled.
 
 
 ### *Subscriber*
 *Subscriber* is an application that performs the following actions:
 1. Subscribes to the *EventMessage* event, and consumed *EventMessages* as they are published with a maximum throughput of one message per second.
-2. Removes the *EventMessage's* unieque identifer from the *unconsumedmessage* table so we can check later to see if any messages were not properly handled.
+2. Removes the *EventMessage's* unieque identifer from the *UnconsumedMessage* table so we can check later to see if any messages were not properly handled.
 
 
 ### *Statistics*
@@ -41,9 +41,9 @@ The solution consists of four applications:
 - It provides callers with the current message count for the given RabbitMQ queue name.
 
 
-### *Website**
+### *Website*
 *Website* is an ASP.Net Core MVC application with a single purpose:
-- It allows users to see the current message count for the *Subscriber* queue in RabbitMQ.  This allows us to easily inspect whether there are currently enough *Subscribers* to keep up with the active *Publishers*.
+- It allows users to see the current message count for the *Subscriber* queue in RabbitMQ.  This allows humans to easily inspect whether there are currently enough *Subscribers* to keep up with the active *Publishers*.
 
 
 
@@ -53,11 +53,12 @@ The solution has dependencies on two public Container images:
 
 ### SQL Server (Linux)
 Image Name:  mcr.microsoft.com/mssql/server
-Used for:
-  tracking which published messages have not yet been consumed by *Subscribers**
+
+Used for: Tracking which published *EventMessages* have not yet been consumed by *Subscribers*
 
 ### RabbitMQ
 Image Name:  rabbitmq:3-management
+
 Used for:  An Enterprise-Messaging transport.  This is what we are pretending to stress-test.
 
 
@@ -66,9 +67,9 @@ Used for:  An Enterprise-Messaging transport.  This is what we are pretending to
 
 
 ### Getting the application
-Navigate to the directory where you want the solution to be downloaded.  We'll use **C:\source** as an example:
+Navigate to the directory where you want the solution to be downloaded.  We'll use **/C/source** as an example:
 ~~~
-cd C:\source
+cd /C/source
 ~~~
 
 Clone the source code from Git Hub with the following git command:
@@ -76,13 +77,13 @@ Clone the source code from Git Hub with the following git command:
 git clone https://github.com/EnterpriseProductsLP/container-rfp-demo.git
 ~~~
 
-The source code is downloaded to **C:\source\container-rfp-demo**.
+The source code is downloaded to **/C/source/container-rfp-demo**.
 
 
 ### Running the application
-Navigate to the directory where you cloned the source code.  We'll use **C:\source\container-rfp-demo** as an example:
+Navigate to the directory where you cloned the source code.  We'll use **/C/source/container-rfp-demo** as an example:
 ~~~
-cd C:\source\container-rfp-demo
+cd /C/source/container-rfp-demo
 ~~~
 
 Change to the **src** directory:
@@ -90,7 +91,7 @@ Change to the **src** directory:
 cd src
 ~~~
 
-You are now in the folder container the Docker-Compose yml file.  To run the solution, execute the following command from your prompt:
+You are now in the folder containing the docker-compose.yml file.  To run the solution, execute the following command from your prompt:
 ~~~
 docker-compose up -d
 ~~~
@@ -111,16 +112,16 @@ This command will perform the following actions, running the solution in the det
 
 
 
-## Checking the Application is Running Correctly
+## Checking That the Application is Running Correctly
 
 
 ### Checking the *Publisher* and *Subscriber*
-From the command prompt and the same directory where you ran docker-compose, execute the following command:
+From a command prompt in the same directory where you ran docker-compose, execute the following command:
 ~~~
 docker-compose logs -f
 ~~~
 
-This will following the log output for all of the solution applications in your command prompt.  If all is well, you should see no errors.  You should also see log messages similar to the following:
+This will follow the log output for all of the running solution applications and emit them in your command prompt.  If all is well, you should see no errors.  You should also see log messages similar to the following:
 ~~~
 publisher_1   | Published message: becb8440-0c14-4b0b-ad95-4523606210e2
 publisher_1   | Published message: fe2d4b2b-15a0-4ffd-9354-fd584ddc2ed0
@@ -137,12 +138,11 @@ These messages indicate that the configured *Publisher* and *Subscriber* are pub
 ### Checking the *Statistics* Site
 You can confirm the *Statistics* site is running correctly by making an http ***GET*** request to the endpoint.  You can use curl, PostMan, your favorite browser, or any other http client that you like.
 
-Make a request to the following URL:
-http://localhost:8081/api/queuedepths/subscriber
+Make a request to the following URL:  http://localhost:8081/api/QueueDepths/Subscriber
 
 Curl example:
 ~~~
-curl http://localhost:8081/api/queuedepths/Subscriber
+curl http://localhost:8081/api/QueueDepths/Subscriber
 ~~~
 
 Example output:
@@ -172,8 +172,7 @@ You need to verify two things:
 
 
 ### Checking the *Website*
-You can confirm the *Website* is running by http ***GET*** request to the endpoint.  You should probably use a browser for this step.  Open the following URL in your favorite browser:
-http://localhost:8080/
+You can confirm the *Website* is running by making an http ***GET*** request to the endpoint.  Open the following URL in your favorite browser:  http://localhost:8080/
 
 You should see three things:
 1.  A page header with some (pretty useless) links.
@@ -183,11 +182,13 @@ You should see three things:
 
 
 ## Experimenting With *Publisher* Load and *Subscriber* Capacity
-<span style="color:red">***In your live demonstration using Kubernetes, we would like you to demonstrate that the *Subscriber* count can be increased dynamically as the *Publisher* count is increased manually.***</span>
+<span style="color:red">***In your live demonstration using Kubernetes, we would like you to demonstrate that the number of running *Subscribers* can be increased automatically as the number of running *Publishers* is increased manually.***</span>
+
+<span style="color:red">***After testing in your local environment to confirm that the application behaves as I claim it will, we would like you to create a deployment solution for your platform to demonstrate that automatic scaling of the *Subscriber* application works correctly.***</span>
 
 Using the provided docker-compose.yml file, the *Publihser* load and *Subscriber* capacity are in perfect balance, each publishing or consuming one message per second.  This means the message count will stay, as it should, near zero at all times.
 
-In order to demonstrate your ability to auto-scale the number of running *Subscribers* based on the count of unconsumed message, you will first need to run additional *Publishers* to create an imbalance between publishing load and consuming capacity.  This can be accomplished by simply running additional *Publihsers*.
+In order to demonstrate your ability to auto-scale the number of running *Subscribers* based on the count of unconsumed messages, you will first need to run additional *Publishers* to create an imbalance between publishing load and consuming capacity.  This can be accomplished by running additional *Publihsers*.
 
 Once you have created an inbalance, and begin to see numbers of unconsumed messages significantly greater than zero, you will want to add additional *Subscribers* in order to bring the solution's overall consumption capacity above parity with its publishing capacity.
 
@@ -195,7 +196,6 @@ Ideally, in your testing, you would:
 1. Confirm that the default configuration provides capacity parity.
 2. Add additional *Publihsers* to confirm that the unconsumed message count grows boundlessly, which would eventually push RabbitMQ (or any other transport) beyond its ability to store new messages.
 3. Add additional *Subscribers* to confirm that doing so reduces the unconsumed message count back to, or near, zero.
-
 
 ### Increasing *Publisher* Load
 
@@ -311,28 +311,40 @@ For example, to have three *Subscribers* instead of the original single *Subscri
 ## Final Notes
 
 
+### HTTP/HTTPS
+The *Statistics* and *Website* applications are unsecured, and allow HTTP connections.  HTTPS is not enabled.
+
 ### Credentials
-For the purposes of this demonstration all of the credentials are the same.
-Username:  admin
-Password:  yourStrong(!)Password
+All of the credentials are the same:
+
+**Username**:  admin
+
+**Password**:  yourStrong(!)Password
 
 
 ### Exposed Service Ports
-For the purposes of this demonstration all of the application ports are exposed and available to standard clients.
+All of the application ports are exposed and available to standard clients.
 
 #### Connecting to SQL Server
 You can use SQL Server Management Studio to connect to the SQL Server container.
-Hostname:  localhost or .
-Port:  1433
+
+**Hostname**:  localhost or .
+
+**Port**:  1433
 
 #### Connecting to RabbitMQ
-You can use a browser to connect to the management interface.
-Full URL:  http://localhost:15672/
+You can use a browser to connect to the management interface:  http://localhost:15672/
 
-#### Connecting to the Website UI
-You can use any browser to connect to the Website UI.
-Full URL:  http://localhost:8080/
+#### Connecting to the *Website* UI
+You can use any browser to connect to the *Website* UI:  http://localhost:8080/
 
-#### Connecting to the Statistics API
-You can use any HTTP client to make a ***GET*** request to to the Statistucs API.  There is only API call of interest.
-Full URL:  http://localhost:8081/api/QueueDepths/Subscribers
+#### Connecting to the *Statistics* API
+You can use any HTTP client to make a ***GET*** request to to the *Statistics* API.  There is only API call of interest:  http://localhost:8081/api/QueueDepths/Subscriber
+
+
+### Getting Unconfirmed Message Counts for Dynamic *Subscriber* Scaling
+There are two ways your dynamic scaling solution can determine the unconsumed *EventMessage* count to decide it more *Subscribers* need to be started:
+1.  You can make an HTTP ***GET*** request to the *Statistics* API endpoint to get the count.  As currently configured, the URLs are:
+      - Internal to the application:  http://statistics/api/QueueDepths/Subscriber
+      - From the host computer:  http://localhost:8081/api/QueueDepths/Subscriber
+2.  You can use RabbitMQ's API endpoint directly.  The documentation is located at:  http://localhost:15672/api
