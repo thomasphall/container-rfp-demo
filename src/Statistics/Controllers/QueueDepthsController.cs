@@ -26,7 +26,7 @@ namespace Statistics.Controllers
         {
             var queueDepthReader = new RabbitMqQueueDepthReader();
 
-            return await queueDepthReader.GetQueueDepth(queueName);
+            return await queueDepthReader.GetQueueDepth(queueName).ConfigureAwait(false);
         }
     }
 }

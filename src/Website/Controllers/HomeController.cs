@@ -33,7 +33,7 @@ namespace Website.Controllers
             using (var httpClient = new HttpClient())
             {
                 // Get the queue depth.
-                ViewData["messageCount"] = await httpClient.GetStringAsync($"http://statistics/api/QueueDepths/{queueName}");
+                ViewData["messageCount"] = await httpClient.GetStringAsync($"http://statistics/api/QueueDepths/{queueName}").ConfigureAwait(false);
             }
 
             return View();

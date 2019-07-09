@@ -27,10 +27,10 @@ namespace Publisher
             Thread.Sleep(10000);
 
             ConfigureExitLogic();
-            var host = await StartHost();
+            var host = await StartHost().ConfigureAwait(false);
             SetConsoleTitle(host);
-            await EmitStartupSuccessMessages();
-            await WaitAndStop(host);
+            await EmitStartupSuccessMessages().ConfigureAwait(false);
+            await WaitAndStop(host).ConfigureAwait(false);
         }
 
         private static void CancelKeyPress(object sender, ConsoleCancelEventArgs e)
@@ -61,10 +61,10 @@ namespace Publisher
 
         private static async Task EmitStartupSuccessMessages()
         {
-            await ConsoleUtilities.WriteLineAsyncWithColor(ConsoleColor.Green, "NServiceBus endpoint connected.");
-            await ConsoleUtilities.WriteLineAsyncWithColor(ConsoleColor.Green, "Application running.");
-            await Console.Out.WriteLineAsync();
-            await ConsoleUtilities.WriteLineAsyncWithColor(ConsoleColor.Yellow, "Press Ctrl+C to exit...");
+            await ConsoleUtilities.WriteLineAsyncWithColor(ConsoleColor.Green, "NServiceBus endpoint connected.").ConfigureAwait(false);
+            await ConsoleUtilities.WriteLineAsyncWithColor(ConsoleColor.Green, "Application running.").ConfigureAwait(false);
+            await Console.Out.WriteLineAsync().ConfigureAwait(false);
+            await ConsoleUtilities.WriteLineAsyncWithColor(ConsoleColor.Yellow, "Press Ctrl+C to exit...").ConfigureAwait(false);
         }
 
         private static void ProcessExit(object sender, EventArgs e)
@@ -80,15 +80,15 @@ namespace Publisher
         private static async Task<Host> StartHost()
         {
             var host = new Host();
-            await host.Start();
+            await host.Start().ConfigureAwait(false);
 
             return host;
         }
 
         private static async Task WaitAndStop(Host host)
         {
-            await _semaphore.WaitAsync();
-            await host.Stop();
+            await _semaphore.WaitAsync().ConfigureAwait(false);
+            await host.Stop().ConfigureAwait(false);
         }
     }
 }

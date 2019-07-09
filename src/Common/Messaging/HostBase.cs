@@ -99,8 +99,8 @@ namespace Common.Messaging
             try
             {
                 CancelTasks();
-                await WaitForTasksToFinish();
-                await _endpoint.Stop();
+                await WaitForTasksToFinish().ConfigureAwait(false);
+                await _endpoint.Stop().ConfigureAwait(false);
             }
             catch (Exception ex)
             {

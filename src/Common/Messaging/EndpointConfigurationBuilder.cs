@@ -105,7 +105,7 @@ namespace Common.Messaging
         {
             try
             {
-                await context.Stop();
+                await context.Stop().ConfigureAwait(false);
             }
             finally
             {
