@@ -8,6 +8,8 @@
 // </copyright>
 // ---------------------------------------------------------------------------------------------------------------
 
+using System.Threading.Tasks;
+
 using Common.RabbitMq;
 
 using Microsoft.AspNetCore.Mvc;
@@ -20,11 +22,11 @@ namespace Statistics.Controllers
     {
         // GET api/QueueDepths/5
         [HttpGet("{queueName}")]
-        public ActionResult<uint> Get(string queueName)
+        public async Task<ActionResult<uint>> Get(string queueName)
         {
             var queueDepthReader = new RabbitMqQueueDepthReader();
 
-            return queueDepthReader.GetQueueDepth(queueName).ConfigureAwait(false).GetAwaiter().GetResult();
+            return await queueDepthReader.GetQueueDepth(queueName);
         }
     }
 }
