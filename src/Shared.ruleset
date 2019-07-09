@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<RuleSet Name="Estream Shared Rulest - Based on Microsoft Managed Recommended Rules, and includes StyleCop Analyzers." Description="These are the common Estream rules, and focus on the most critical problems in your code, including potential security holes, application crashes, and other important logic and design errors. It is recommended to include this rule set in any custom rule set you create for your projects.  They also include the StyleCop Analyzers." ToolsVersion="15.0">
+<RuleSet Name="Estream Shared Rulest - Based on Microsoft Managed Recommended Rules, and includes StyleCop Analyzers." Description="These are the common Estream rules, and focus on the most critical problems in your code, including potential security holes, application crashes, and other important logic and design errors. It is recommended to include this rule set in any custom rule set you create for your projects.  They also include the StyleCop Analyzers." ToolsVersion="16.0">
   <Localization ResourceAssembly="Microsoft.VisualStudio.CodeAnalysis.RuleSets.Strings.dll" ResourceBaseName="Microsoft.VisualStudio.CodeAnalysis.RuleSets.Strings.Localized">
     <Name Resource="MinimumRecommendedRules_Name" />
     <Description Resource="MinimumRecommendedRules_Description" />
@@ -172,6 +172,7 @@
     <Rule Id="SA1408" Action="Error" />
     <Rule Id="SA1410" Action="Error" />
     <Rule Id="SA1411" Action="Error" />
+    <Rule Id="SA1413" Action="None" />
     <Rule Id="SA1500" Action="Error" />
     <Rule Id="SA1501" Action="Error" />
     <Rule Id="SA1502" Action="Error" />
@@ -236,6 +237,5 @@
     <Rule Id="SX1101" Action="Error" />
     <Rule Id="SX1309" Action="Error" />
     <Rule Id="SX1309S" Action="Error" />
-    <Rule Id="SA1413" Action="None" />
   </Rules>
 </RuleSet>

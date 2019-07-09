@@ -8,7 +8,7 @@
   "settings": {
     "documentationRules": {
       "companyName": "Enterprise Products Partners L.P. (Enterprise)",
-      "copyrightText": "© Copyright 2012 - 2018, {companyName}, All Rights Reserved.\nPermission to use, copy, modify, or distribute this software source code, binaries or\nrelated documentation, is strictly prohibited, without written consent from Enterprise.\nFor inquiries about the software, contact Enterprise: Enterprise Products Company Law\nDepartment, 1100 Louisiana, 10th Floor, Houston, Texas 77002, phone 713-381-6500.",
+      "copyrightText": "© Copyright 2019, {companyName}, All Rights Reserved.\nPermission to use, copy, modify, or distribute this software source code, binaries or\nrelated documentation, is strictly prohibited, without written consent from Enterprise.\nFor inquiries about the software, contact Enterprise: Enterprise Products Company Law\nDepartment, 1100 Louisiana, 10th Floor, Houston, Texas 77002, phone 713-381-6500.",
       "documentationCulture": "en-US",
       "documentExposedElements": false,
       "documentInterfaces": false,
@@ -19,7 +19,7 @@
         // None here, for now.
       ],
       "fileNamingConvention": "stylecop",
-      "headerDecoration": "-----------------------------------------------------------------------",
+      "headerDecoration": "---------------------------------------------------------------------------------------------------------------",
       "xmlHeader": true
     },
     "indentation": {
