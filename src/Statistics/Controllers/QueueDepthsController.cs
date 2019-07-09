@@ -23,9 +23,8 @@ namespace Statistics.Controllers
         public ActionResult<uint> Get(string queueName)
         {
             var queueDepthReader = new RabbitMqQueueDepthReader();
-            var messageCount = queueDepthReader.GetQueueDepth(queueName);
 
-            return messageCount;
+            return queueDepthReader.GetQueueDepth(queueName).ConfigureAwait(false).GetAwaiter().GetResult();
         }
     }
 }

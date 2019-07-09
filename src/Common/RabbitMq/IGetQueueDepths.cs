@@ -8,10 +8,12 @@
 // </copyright>
 // ---------------------------------------------------------------------------------------------------------------
 
+using System.Threading.Tasks;
+
 namespace Common.RabbitMq
 {
     public interface IGetQueueDepths
     {
-        uint GetQueueDepth(string queueName);
+        Task<uint> GetQueueDepth(string queueName);
     }
 }

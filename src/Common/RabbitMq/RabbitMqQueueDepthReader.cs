@@ -8,27 +8,48 @@
 // </copyright>
 // ---------------------------------------------------------------------------------------------------------------
 
+using System;
+using System.Threading.Tasks;
+
 using RabbitMQ.Client;
 
 namespace Common.RabbitMq
 {
     public class RabbitMqQueueDepthReader : IGetQueueDepths
     {
-        public uint GetQueueDepth(string queueName)
+        public async Task<uint> GetQueueDepth(string queueName)
         {
-            var connectionFactory = new ConnectionFactory
+            var connectionAttempts = 1;
+
+            while (true)
             {
-                UserName = "admin",
-                Password = "yourStrong(!)Password",
-                VirtualHost = "/",
-                HostName = "rabbitmq"
-            };
+                try
+                {
+                    var connectionFactory = new ConnectionFactory
+                    {
+                        UserName = "admin",
+                        Password = "yourStrong(!)Password",
+                        VirtualHost = "/",
+                        HostName = "rabbitmq"
+                    };
 
-            var connection = connectionFactory.CreateConnection();
-            var channel = connection.CreateModel();
-            var response = channel.QueueDeclarePassive(queueName);
+                    var connection = connectionFactory.CreateConnection();
+                    var channel = connection.CreateModel();
+                    var response = channel.QueueDeclarePassive(queueName);
 
-            return response.MessageCount;
+                    return response.MessageCount;
+                }
+                catch (Exception)
+                {
+                    if (connectionAttempts >= 10)
+                    {
+                        throw;
+                    }
+
+                    var delay = 100 * (int)Math.Pow(2, connectionAttempts++);
+                    await Task.Delay(delay).ConfigureAwait(false);
+                }
+            }
         }
     }
 }
