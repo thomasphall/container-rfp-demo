@@ -112,16 +112,16 @@ This command will perform the following actions, running the solution in the det
 
 
 
-## Checking the Application is Running Correctly
+## Checking That the Application is Running Correctly
 
 
 ### Checking the *Publisher* and *Subscriber*
-From the command prompt and the same directory where you ran docker-compose, execute the following command:
+From a command prompt in the same directory where you ran docker-compose, execute the following command:
 ~~~
 docker-compose logs -f
 ~~~
 
-This will following the log output for all of the solution applications in your command prompt.  If all is well, you should see no errors.  You should also see log messages similar to the following:
+This will follow the log output for all of the running solution applications and emit them in your command prompt.  If all is well, you should see no errors.  You should also see log messages similar to the following:
 ~~~
 publisher_1   | Published message: becb8440-0c14-4b0b-ad95-4523606210e2
 publisher_1   | Published message: fe2d4b2b-15a0-4ffd-9354-fd584ddc2ed0
@@ -138,8 +138,7 @@ These messages indicate that the configured *Publisher* and *Subscriber* are pub
 ### Checking the *Statistics* Site
 You can confirm the *Statistics* site is running correctly by making an http ***GET*** request to the endpoint.  You can use curl, PostMan, your favorite browser, or any other http client that you like.
 
-Make a request to the following URL:
-http://localhost:8081/api/QueueDepths/Subscriber
+Make a request to the following URL:  http://localhost:8081/api/QueueDepths/Subscriber
 
 Curl example:
 ~~~
@@ -173,8 +172,7 @@ You need to verify two things:
 
 
 ### Checking the *Website*
-You can confirm the *Website* is running by http ***GET*** request to the endpoint.  You should probably use a browser for this step.  Open the following URL in your favorite browser:
-http://localhost:8080/
+You can confirm the *Website* is running by making an http ***GET*** request to the endpoint.  Open the following URL in your favorite browser:  http://localhost:8080/
 
 You should see three things:
 1.  A page header with some (pretty useless) links.
@@ -184,11 +182,13 @@ You should see three things:
 
 
 ## Experimenting With *Publisher* Load and *Subscriber* Capacity
-<span style="color:red">***In your live demonstration using Kubernetes, we would like you to demonstrate that the *Subscriber* count can be increased dynamically as the *Publisher* count is increased manually.***</span>
+<span style="color:red">***In your live demonstration using Kubernetes, we would like you to demonstrate that the number of running *Subscribers* can be increased automatically as the number of running *Publishers* is increased manually.***</span>
+
+<span style="color:red">***After testing in your local environment to confirm that the application behaves as I claim it will, we would like you to create a deployment solution for your platform to demonstrate that automatic scaling of the *Subscriber* application works correctly.***</span>
 
 Using the provided docker-compose.yml file, the *Publihser* load and *Subscriber* capacity are in perfect balance, each publishing or consuming one message per second.  This means the message count will stay, as it should, near zero at all times.
 
-In order to demonstrate your ability to auto-scale the number of running *Subscribers* based on the count of unconsumed message, you will first need to run additional *Publishers* to create an imbalance between publishing load and consuming capacity.  This can be accomplished by simply running additional *Publihsers*.
+In order to demonstrate your ability to auto-scale the number of running *Subscribers* based on the count of unconsumed messages, you will first need to run additional *Publishers* to create an imbalance between publishing load and consuming capacity.  This can be accomplished by running additional *Publihsers*.
 
 Once you have created an inbalance, and begin to see numbers of unconsumed messages significantly greater than zero, you will want to add additional *Subscribers* in order to bring the solution's overall consumption capacity above parity with its publishing capacity.
 
@@ -196,7 +196,6 @@ Ideally, in your testing, you would:
 1. Confirm that the default configuration provides capacity parity.
 2. Add additional *Publihsers* to confirm that the unconsumed message count grows boundlessly, which would eventually push RabbitMQ (or any other transport) beyond its ability to store new messages.
 3. Add additional *Subscribers* to confirm that doing so reduces the unconsumed message count back to, or near, zero.
-
 
 ### Increasing *Publisher* Load
 
@@ -312,28 +311,40 @@ For example, to have three *Subscribers* instead of the original single *Subscri
 ## Final Notes
 
 
+### HTTP/HTTPS
+The *Statistics* and *Website* applications are unsecured, and allow HTTP connections.  HTTPS is not enabled.
+
 ### Credentials
-For the purposes of this demonstration all of the credentials are the same.
-Username:  admin
-Password:  yourStrong(!)Password
+All of the credentials are the same:
+
+**Username**:  admin
+
+**Password**:  yourStrong(!)Password
 
 
 ### Exposed Service Ports
-For the purposes of this demonstration all of the application ports are exposed and available to standard clients.
+All of the application ports are exposed and available to standard clients.
 
 #### Connecting to SQL Server
 You can use SQL Server Management Studio to connect to the SQL Server container.
-Hostname:  localhost or .
-Port:  1433
+
+**Hostname**:  localhost or .
+
+**Port**:  1433
 
 #### Connecting to RabbitMQ
-You can use a browser to connect to the management interface.
-Full URL:  http://localhost:15672/
+You can use a browser to connect to the management interface:  http://localhost:15672/
 
 #### Connecting to the *Website* UI
-You can use any browser to connect to the *Website* UI.
-Full URL:  http://localhost:8080/
+You can use any browser to connect to the *Website* UI:  http://localhost:8080/
 
 #### Connecting to the *Statistics* API
-You can use any HTTP client to make a ***GET*** request to to the *Statistics* API.  There is only API call of interest.
-Full URL:  http://localhost:8081/api/QueueDepths/Subscriber
+You can use any HTTP client to make a ***GET*** request to to the *Statistics* API.  There is only API call of interest:  http://localhost:8081/api/QueueDepths/Subscriber
+
+
+### Getting Unconfirmed Message Counts for Dynamic *Subscriber* Scaling
+There are two ways your dynamic scaling solution can determine the unconsumed *EventMessage* count to decide it more *Subscribers* need to be started:
+1.  You can make an HTTP ***GET*** request to the *Statistics* API endpoint to get the count.  As currently configured, the URLs are:
+      - Internal to the application:  http://statistics/api/QueueDepths/Subscriber
+      - From the host computer:  http://localhost:8081/api/QueueDepths/Subscriber
+2.  You can use RabbitMQ's API endpoint directly.  The documentation is located at:  http://localhost:15672/api
