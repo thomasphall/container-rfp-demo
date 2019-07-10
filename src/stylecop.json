@@ -1,0 +1,68 @@
+﻿{
+  // ACTION REQUIRED: You have successfully added this file to your project, but it
+  // will not take effect until additional steps are taken to enable it. See the
+  // following page for additional information:
+  //
+  // https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/EnableConfiguration.md
+  "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
+  "settings": {
+    "documentationRules": {
+      "companyName": "Enterprise Products Partners L.P. (Enterprise)",
+      "copyrightText": "Copyright 2019, {companyName}, All Rights Reserved.\nPermission to use, copy, modify, or distribute this software source code, binaries or\nrelated documentation, is strictly prohibited, without written consent from Enterprise.\nFor inquiries about the software, contact Enterprise: Enterprise Products Company Law\nDepartment, 1100 Louisiana, 10th Floor, Houston, Texas 77002, phone 713-381-6500.",
+      "documentationCulture": "en-US",
+      "documentExposedElements": false,
+      "documentInterfaces": false,
+      "documentInternalElements": false,
+      "documentPrivateElements": false,
+      "documentPrivateFields": false,
+      "excludeFromPunctuationCheck": [
+        // None here, for now.
+      ],
+      "fileNamingConvention": "stylecop",
+      "headerDecoration": "---------------------------------------------------------------------------------------------------------------",
+      "xmlHeader": true
+    },
+    "indentation": {
+      "indentationSize": 4,
+      "tabSize": 4,
+      "useTabs": false
+    },
+    "layoutRules": {
+      "allowConsecutiveUsings": false,
+      "newlineAtEndOfFile": "require"
+    },
+    "maintainabilityRules": {
+      "topLevelTypes": [
+        "class",
+        "delegate",
+        "enum",
+        "interface",
+        "struct"
+      ]
+    },
+    "namingRules": {
+      "allowCommonHungarianPrefixes": true,
+      "allowedHungarianPrefixes": [
+        // None here, for now.
+      ]
+    },
+    "orderingRules": {
+      "blankLinesBetweenUsingGroups": "allow",
+      "elementOrder": [
+        "kind",
+        "constant",
+        "accessibility",
+        "static",
+        "readonly"
+      ],
+      "systemUsingDirectivesFirst": true,
+      "usingDirectivesPlacement": "outsideNamespace"
+    },
+    "readabilityRules": {
+      "allowBuiltInTypeAliases": false
+    },
+    "spacingRules": {
+      // There are currently no supported spacing rules.
+    }
+  }
+}
