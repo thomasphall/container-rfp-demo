@@ -67,9 +67,9 @@ Used for:  An Enterprise-Messaging transport.  This is what we are pretending to
 
 
 ### Getting the application
-Navigate to the directory where you want the solution to be downloaded.  We'll use **/C/source** as an example:
+Navigate to the directory where you want the solution to be downloaded.  We'll use **~/source** as an example:
 ~~~
-cd /C/source
+cd ~/source
 ~~~
 
 Clone the source code from Git Hub with the following git command:
@@ -77,18 +77,13 @@ Clone the source code from Git Hub with the following git command:
 git clone https://github.com/EnterpriseProductsLP/container-rfp-demo.git
 ~~~
 
-The source code is downloaded to **/C/source/container-rfp-demo**.
+The source code is downloaded to **~/source/container-rfp-demo**.
 
 
 ### Running the application
-Navigate to the directory where you cloned the source code.  We'll use **/C/source/container-rfp-demo** as an example:
+Navigate to the directory where you cloned the source code, then into the "src" directory.  We'll use **~/source/container-rfp-demo/src** as an example:
 ~~~
-cd /C/source/container-rfp-demo
-~~~
-
-Change to the **src** directory:
-~~~
-cd src
+cd ~/source/container-rfp-demo/src
 ~~~
 
 You are now in the folder containing the docker-compose.yml file.  To run the solution, execute the following command from your prompt:
