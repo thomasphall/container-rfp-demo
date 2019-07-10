@@ -80,8 +80,9 @@ namespace Common.Messaging
                             throw;
                         }
 
-                        var delay = 100 * (int)Math.Pow(2, connectionAttempts++);
                         await ConsoleUtilities.WriteLineAsyncWithColor(ConsoleColor.Yellow, $"Startup failed, retry attempt {connectionAttempts} reason: {ex.Message}").ConfigureAwait(false);
+
+                        var delay = 100 * (int)Math.Pow(2, connectionAttempts++);
                         await Task.Delay(delay).ConfigureAwait(false);
                     }
                 }
