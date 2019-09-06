@@ -15,6 +15,16 @@ FROM build AS publish
 RUN dotnet publish "Publisher.csproj" -c Release -o /app
 
 FROM base AS final
-WORKDIR /app
+
+ENV APP_ROOT=/app
+ENV PATH=${APP_ROOT}/bin:${PATH} HOME=${APP_ROOT}
+RUN chmod -R u+x ${APP_ROOT} && \
+    chgrp -R 0 ${APP_ROOT} && \
+    chmod -R g=u ${APP_ROOT} /etc/passwd
+
+### Containers should NOT run as root as a good practice
+USER 10001
+WORKDIR ${APP_ROOT}
+
 COPY --from=publish /app .
 ENTRYPOINT ["dotnet", "Publisher.dll"]
