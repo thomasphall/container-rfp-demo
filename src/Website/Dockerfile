@@ -4,9 +4,9 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
 WORKDIR /src
-COPY ["Website/Website.csproj", "Website/"]
+COPY ["Website.csproj", "Website/"]
 RUN dotnet restore "Website/Website.csproj"
-COPY . .
+COPY .. .
 WORKDIR "/src/Website"
 RUN dotnet build "Website.csproj" -c Release -o /app
 
