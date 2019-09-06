@@ -15,6 +15,7 @@ FROM build AS publish
 RUN dotnet publish "Subscriber.csproj" -c Release -o /app
 
 FROM base AS final
+USER root
 WORKDIR /app
 COPY --from=publish /app .
 ENTRYPOINT ["dotnet", "Subscriber.dll"]
