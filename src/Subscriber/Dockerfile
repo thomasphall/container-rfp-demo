@@ -3,11 +3,11 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
 WORKDIR /src
-COPY ["Subscriber/Subscriber.csproj", "Subscriber/"]
-COPY ["Contracts/Contracts.csproj", "Contracts/"]
-COPY ["Common/Common.csproj", "Common/"]
+COPY ["Subscriber.csproj", "Subscriber/"]
+COPY ["../Contracts/Contracts.csproj", "Contracts/"]
+COPY ["../Common/Common.csproj", "Common/"]
 RUN dotnet restore "Subscriber/Subscriber.csproj"
-COPY . .
+COPY .. .
 WORKDIR "/src/Subscriber"
 RUN dotnet build "Subscriber.csproj" -c Release -o /app
 
