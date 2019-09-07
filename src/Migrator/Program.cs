@@ -35,7 +35,7 @@ namespace Migrator
                 : new SqlConnectionStringBuilder
                 {
                     ApplicationName = "RabbitMQ Stress Test Migrations",
-                    DataSource = "172.30.95.117",
+                    DataSource = "server.sandoval.svc.cluster.local",
                     InitialCatalog = "RabbitStressTest",
                     IntegratedSecurity = false,
                     MultipleActiveResultSets = false,
