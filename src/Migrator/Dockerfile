@@ -7,7 +7,7 @@ COPY Migrator.csproj Migrator/
 COPY ../Common/Common.csproj Common/
 COPY ../Migrations/Migrations.csproj Migrations/
 RUN dotnet restore Migrator/Migrator.csproj
-COPY . .
+COPY .. .
 WORKDIR /src/Migrator
 RUN dotnet build Migrator.csproj -c Release -o /app
 
