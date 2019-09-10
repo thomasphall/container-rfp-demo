@@ -4,7 +4,7 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
 WORKDIR /src
 
-COPY ["Publisher/Publisher.csproj", "Publisher/"]
+COPY ["src/Publisher/Publisher.csproj", "Publisher/"]
 COPY ["../Contracts/Contracts.csproj", "Contracts/"]
 COPY ["../Common/Common.csproj", "Common/"]
 RUN dotnet restore "Publisher/Publisher.csproj"
