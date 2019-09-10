@@ -3,8 +3,8 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
 WORKDIR /src
-RUN file="$(ls -1 /tmp/dir)" && echo $file
-COPY ["Publisher.csproj", "Publisher/"]
+
+COPY ["Publisher/Publisher.csproj", "Publisher/"]
 COPY ["../Contracts/Contracts.csproj", "Contracts/"]
 COPY ["../Common/Common.csproj", "Common/"]
 RUN dotnet restore "Publisher/Publisher.csproj"
